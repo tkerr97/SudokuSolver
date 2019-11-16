@@ -2,6 +2,7 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <string>
+#include <direct.h>
 
 
 cv::Mat performImageActions(cv::Mat image) {
@@ -45,28 +46,49 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	return image;
 }
 
+cv::Mat findNumbers(cv::Mat image, std::string file) {
+	cv::Mat numbers = cv::Mat::zeros(3, 3, CV_32F);
+	std::string path = "data/" + file;
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			cv::Rect region = cv::Rect(j * 55, i * 55, 55, 55);
+			cv::Mat number = cv::Mat(image, region);
+			_mkdir(path.c_str());
+			cv::imwrite("data/" + file + "/" +std::to_string(j+1) + "," + std::to_string(i+1) + ".jpg", number);
+			//Use model to predict from number
+			//Put that prediction in numbers
+		}
+	}
+	return numbers;
+}
+
 int main()
 {
 	std::cout << "Image File: ";
 	//std::string filename;
 	//std::cin >> filename;
-	std::string  filename = "../images/image25.jpg";
 
-	cv::Mat image = cv::imread(filename);
-	
-	if (!image.data) {
-		std::cout << "Could not open the file!" << std::endl;
-		return -1;
+	for (int i = 0; i < 1089; i++) {
+		std::string  filename = "../images/image"+ std::to_string(i) + ".jpg";
+
+		cv::Mat image = cv::imread(filename);
+
+		if (!image.data) {
+			//std::cout << "Could not open the file!" << std::endl;
+			continue;
+		}
+
+		//cv::imshow("Monday", image);
+
+		// Make our image binary and open/close to make readable
+		cv::Mat threshImage = performImageActions(image);
+
+		// Find the outer Barrier and warp to a flat square. Then crop to the full puzzle image
+		image = warpImageToCorners(threshImage, image);
+
+		//cv::imshow("Wednesday", image);
+
+		cv::Mat sudoku = findNumbers(image, std::to_string(i));
 	}
-
-	cv::imshow("Monday", image);
-
-	// Make our image binary and open/close to make readable
-	cv::Mat threshImage = performImageActions(image);
-
-	// Find the outer Barrier and warp to a flat square. Then crop to the full puzzle image
-	image = warpImageToCorners(threshImage, image);
-
-	cv::imshow("Wednesday", image);
 	cv::waitKey(0);
 }
