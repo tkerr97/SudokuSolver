@@ -51,10 +51,10 @@ cv::Mat findNumbers(cv::Mat image, std::string file) {
 	std::string path = "data/" + file;
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
-			cv::Rect region = cv::Rect(j * 55, i * 55, 55, 55);
+			cv::Rect region = cv::Rect(i * 55, j * 55, 55, 55);
 			cv::Mat number = cv::Mat(image, region);
-			_mkdir(path.c_str());
-			cv::imwrite("data/" + file + "/" +std::to_string(j+1) + "," + std::to_string(i+1) + ".jpg", number);
+			
+			cv::imwrite(path + "-" +std::to_string(j+1) + "," + std::to_string(i+1) + ".jpg", number);
 			//Use model to predict from number
 			//Put that prediction in numbers
 		}
@@ -62,16 +62,16 @@ cv::Mat findNumbers(cv::Mat image, std::string file) {
 	return numbers;
 }
 
-int main()
+int mainT()
 {
 	std::cout << "Image File: ";
 	//std::string filename;
 	//std::cin >> filename;
 
 	for (int i = 0; i < 1089; i++) {
-		std::string  filename = "../images/image"+ std::to_string(i) + ".jpg";
+		std::string  filename = "../images/image"+ std::to_string(i);
 
-		cv::Mat image = cv::imread(filename);
+		cv::Mat image = cv::imread(filename + ".jpg");
 
 		if (!image.data) {
 			//std::cout << "Could not open the file!" << std::endl;
@@ -91,4 +91,5 @@ int main()
 		cv::Mat sudoku = findNumbers(image, std::to_string(i));
 	}
 	cv::waitKey(0);
+	return 0;
 }
