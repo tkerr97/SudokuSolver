@@ -8,7 +8,7 @@ int main()
 	std::cout << "Image File: ";
 	//std::string filename;
 	//std::cin >> filename;
-	std::string  filename = "../images/image19.jpg";
+	std::string  filename = "../images/image1009.jpg";
 	cv::Mat image = cv::imread(filename);
 	cv::Mat grayImage, threshImage, edges;
 	if (!image.data) {
@@ -18,13 +18,13 @@ int main()
 
 	// Make our image binary and open/close to make readable
 	cv::imshow("Monday", image);
-	int rad = 1;
-	cv::Mat element = cv::getStructuringElement(rad, cv::Size(2*rad+1,2*rad+1), cv::Point(rad,rad));
+	int rad = 5;
+	cv::Mat element = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(rad,rad));
 	cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
 	GaussianBlur(grayImage, grayImage, cv::Size(15, 15), 0);
 	cv::adaptiveThreshold(grayImage, threshImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, 15, 0);
 	//cv::morphologyEx(threshImage, threshImage, cv::MORPH_OPEN, element);
-	//cv::morphologyEx(threshImage, threshImage, cv::MORPH_CLOSE, element);
+	cv::morphologyEx(threshImage, threshImage, cv::MORPH_CLOSE, element);
 	cv::imshow("Taco", threshImage);
 
 	// Find the outer Barrier and warp to a flat square. Then crop to the full puzzle image
@@ -33,10 +33,9 @@ int main()
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Point> square;
 	std::vector<cv::Vec4i> hierarchy;
-	cv::findContours(edges, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_NONE);
+	cv::findContours(edges, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 	cv::imshow("Tuesday", edges);
-	cv::Scalar color = cv::Scalar(255, 255, 0);
-	cv::approxPolyDP(contours.at(hierarchy[0][0]), square, 15, true);
+
 	cv::imshow("Wednesday", image);
 	cv::waitKey(0);
 }
