@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream> 
 
-int main() {
+int mainT() {
 	std::ofstream out("data.txt");
 	for (int i = 0; i < 1089; i++) {
 		std::string filename = "../images/image" + std::to_string(i) + ".dat";

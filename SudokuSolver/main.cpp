@@ -46,15 +46,15 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	return image;
 }
 
-cv::Mat findNumbers(cv::Mat image, std::string file) {
+cv::Mat findNumbers(cv::Mat image) {
 	cv::Mat numbers = cv::Mat::zeros(3, 3, CV_32F);
-	std::string path = "data/" + file;
+
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
 			cv::Rect region = cv::Rect(i * 55, j * 55, 55, 55);
 			cv::Mat number = cv::Mat(image, region);
 			
-			cv::imwrite(path + "-" +std::to_string(j+1) + "," + std::to_string(i+1) + ".jpg", number);
+			
 			//Use model to predict from number
 			//Put that prediction in numbers
 		}
@@ -62,34 +62,38 @@ cv::Mat findNumbers(cv::Mat image, std::string file) {
 	return numbers;
 }
 
-int mainT()
+int main()
 {
 	std::cout << "Image File: ";
 	//std::string filename;
 	//std::cin >> filename;
 
-	for (int i = 0; i < 1089; i++) {
-		std::string  filename = "../images/image"+ std::to_string(i);
+		std::string  filename = "../images/image19";
 
 		cv::Mat image = cv::imread(filename + ".jpg");
-
+		
 		if (!image.data) {
-			//std::cout << "Could not open the file!" << std::endl;
-			continue;
+			std::cout << "Could not open the file!" << std::endl;
+			
 		}
 
-		//cv::imshow("Monday", image);
+		cv::imshow("Monday", image);
+		cv::waitKey(0);
 
 		// Make our image binary and open/close to make readable
 		cv::Mat threshImage = performImageActions(image);
 
+		cv::imshow("Monday", image);
+		cv::waitKey(0);
 		// Find the outer Barrier and warp to a flat square. Then crop to the full puzzle image
 		image = warpImageToCorners(threshImage, image);
 
-		//cv::imshow("Wednesday", image);
+		cv::imshow("Wednesday", image);
+		cv::waitKey(0);
+		cv::Mat sudoku = findNumbers(image);
 
-		cv::Mat sudoku = findNumbers(image, std::to_string(i));
-	}
+		std::cout << sudoku << std::endl;
+	
 	cv::waitKey(0);
 	return 0;
 }
