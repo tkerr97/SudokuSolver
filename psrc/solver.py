@@ -61,14 +61,14 @@ class board:
             # if that number works in the current puzzle
             if self.valid_option(x, y, i):
                 # Add that number to a new board and solve it
-                new_board = self.puzzle
+                new_board = self.puzzle.copy()
                 new_board[x][y] = i
                 print(new_board)
                 temp = board(new_board)
                 solved, puzzle = temp.solve_recursive()
                 # if that solves the puzzle return
                 if solved:
-                    return True, puzzle
+                    return solved, puzzle
                 else:
 #                    print(i, ": failed")
 #                    print(puzzle)
@@ -76,27 +76,19 @@ class board:
             # if not continue
         # If there are no options in this spot given the current board
         # return false
-        return False, self.puzzle
+        return False, None
 
-p = np.array([[5, 3, 0, 0, 7, 0, 0, 0, 0],
-              [6, 0, 0, 1, 9, 5, 0, 0, 0],
-              [0, 9, 8, 0, 0, 0, 0, 6, 0],
-              [8, 0, 0, 0, 6, 0, 0, 0, 3],
-              [4, 0, 0, 8, 0, 3, 0, 0, 1],
-              [7, 0, 0, 0, 2, 0, 0, 0, 6],
-              [0, 6, 0, 0, 0, 0, 2, 8, 0],
-              [0, 0, 0, 4, 1, 9, 0, 0, 5],
-              [0, 0, 0, 0, 8, 0, 0, 7, 9]])
+p = np.array([[0, 0, 0,   0, 0, 0,   0, 0, 4],
+              [0, 0, 0,   7, 0, 0,   3, 5, 9],
+              [0, 2, 0,   6, 4, 0,   0, 0, 0],
 
-s = np.array([[5, 3, 4, 6, 7, 8, 9, 1, 2],
-              [6, 7, 2, 1, 9, 5, 3, 4, 8],
-              [1, 9, 8, 3, 4, 2, 5, 6, 7],
-              [8, 5, 9, 7, 6, 1, 4, 2, 3],
-              [4, 2, 6, 8, 5, 3, 7, 9, 1],
-              [7, 1, 3, 9, 2, 4, 8, 5, 6],
-              [9, 6, 1, 5, 3, 7, 2, 8, 4],
-              [2, 8, 7, 4, 1, 9, 6, 3, 5],
-              [3, 4, 5, 2, 8, 6, 1, 7, 9]])
+              [8, 0, 0,   0, 9, 0,   0, 0, 0],
+              [0, 0, 0,   0, 0, 0,   6, 0, 0],
+              [0, 0, 9,   1, 2, 6,   4, 0, 0],
+
+              [9, 0, 0,   8, 0, 7,   0, 0, 0],
+              [1, 0, 0,   0, 0, 0,   0, 7, 0],
+              [0, 0, 3,   0, 1, 0,   0, 0, 0]])
 
 b = board(p)
 
@@ -112,4 +104,5 @@ print(b.valid_option(5, 7, 5))
 print(b.puzzle)
 solve, puzzle = b.solve_recursive()
 print(solve)
+print(b.puzzle)
 print(puzzle)
