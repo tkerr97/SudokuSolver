@@ -41,12 +41,12 @@ def findNumbers(image, model):
         for j in range(1,10):
             region = cv2.Rect(i * 55, j * 55, 55, 55)
             number = cv2.Mat(image, region)
-            row.append(model.predict(number))
+            row.append(np.argmax(model.predict(number)))
         numbers.append(row)
     return numbers
 
 image = cv2.imread('../images/image19.jpg')
-model = tf.saved_model.load('model/')
+model = tf.keras.models.load_model('model.h5')
 threshImage = performImageActions(image)
 image = warpImageToCorners(image)
 numbers = findNumbers(image, model)
