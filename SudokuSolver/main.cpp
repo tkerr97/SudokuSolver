@@ -23,6 +23,8 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	cv::Mat edges;
 	std::vector<cv::Point2f> squareCorners = { cv::Point2f(0,0), cv::Point2f(500,0), cv::Point2f(500,500) , cv::Point2f(0,500) };
 	cv::Canny(threshImage, edges, 10, 100, 5);
+	cv::imshow("window", edges);
+	cv::waitKey(0);
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Point> square;
 	std::vector<cv::Vec4i> hierarchy;
@@ -41,8 +43,9 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	cv::Point2f tr = cv::Point2f(border.tl().x + border.width, border.tl().y), bl = cv::Point2f(border.tl().x, border.tl().y + border.height);
 	std::vector<cv::Point2f> corners = {border.tl(), tr, border.br(), bl};
 	cv::Mat transform = cv::getPerspectiveTransform(corners, squareCorners);
-	cv::warpPerspective(image, image, transform, cv::Size(500, 500));
-	
+ 	cv::warpPerspective(image, image, transform, cv::Size(500, 500));
+	cv::imshow("window", image);
+	cv::waitKey(0);
 	return image;
 }
 
