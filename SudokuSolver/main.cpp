@@ -2,8 +2,7 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <string>
-#include <direct.h>
-
+#include <fdeep/fdeep.hpp>
 
 cv::Mat performImageActions(cv::Mat image) {
 	cv::Mat threshImage;
@@ -15,22 +14,23 @@ cv::Mat performImageActions(cv::Mat image) {
 	//cv::morphologyEx(threshImage, threshImage, cv::MORPH_OPEN, element);
 	cv::morphologyEx(threshImage, threshImage, cv::MORPH_ERODE, element);
 	
-
+	cv::imshow("window", threshImage);
+	cv::waitKey(0);
 	return threshImage;
 }
 
 cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	cv::Mat edges;
 	std::vector<cv::Point2f> squareCorners = { cv::Point2f(0,0), cv::Point2f(500,0), cv::Point2f(500,500) , cv::Point2f(0,500) };
-	cv::Canny(threshImage, edges, 10, 100, 5);
-	cv::imshow("window", edges);
+	cv::Canny(threshImage, edges, 0, 50, 5);
+	cv::imshow("edges", edges);
 	cv::waitKey(0);
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Point> square;
 	std::vector<cv::Vec4i> hierarchy;
 	cv::findContours(edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
 
-	double max = 0;
+ 	double max = 0;
 	std::vector<cv::Point> bigContour;
 	for (int i = 0; i < contours.size(); i++) {
 		if (cv::contourArea(contours[i]) > max) {
@@ -49,24 +49,26 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	return image;
 }
 
-cv::Mat findNumbers(cv::Mat image) {
-	cv::Mat numbers = cv::Mat::zeros(3, 3, CV_32F);
-
+std::vector<std::vector<int>> findNumbers(cv::Mat image) {
+	std::vector<std::vector<int>> board;
+	const auto model = fdeep::load_model("fdeep.json");
 	for (int i = 0; i < 9; i++) {
+		std::vector<int> row;
 		for (int j = 0; j < 9; j++) {
 			cv::Rect region = cv::Rect(i * 55, j * 55, 55, 55);
 			cv::Mat number = cv::Mat(image, region);
+			const auto input = fdeep::tensor5_from_bytes(number.data, 55,55,3);
+			const auto result = model.predict({ input });
 			
 			
-			//Use model to predict from number
-			//Put that prediction in numbers
+			
 		}
 	}
-	return numbers;
+	return board;
 }
 
-int main()
-{
+int main(){
+	std::cout << "OpenCV version : " << CV_VERSION << std::endl;
 	std::cout << "Image File: ";
 	//std::string filename;
 	//std::cin >> filename;
@@ -93,9 +95,9 @@ int main()
 
 		cv::imshow("Wednesday", image);
 		cv::waitKey(0);
-		cv::Mat sudoku = findNumbers(image);
+		findNumbers(image);
 
-		std::cout << sudoku << std::endl;
+		//std::cout << sudoku << std::endl;
 	
 	cv::waitKey(0);
 	return 0;
