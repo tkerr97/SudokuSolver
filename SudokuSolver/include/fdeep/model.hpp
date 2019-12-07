@@ -206,10 +206,12 @@ private:
     {
         const tensor5s outputs = predict(inputs);
         internal::assertion(outputs.size() == 1,
-            "invalid number of outputs");
+            std::string("invalid number of outputs.\n") +
+            "Use model::predict instead of model::predict_class.");
         const auto output_shape = outputs.front().shape();
         internal::assertion(output_shape.without_depth().area() == 1,
-            "invalid output shape");
+            std::string("invalid output shape.\n") +
+            "Use model::predict instead of model::predict_class.");
         const auto pos = internal::tensor5_max_pos(outputs.front());
         return std::make_pair(pos.z_, outputs.front().get(pos));
     }
@@ -293,6 +295,7 @@ inline model read_model(std::istream& model_file_stream,
         return json_data["trainable_params"][layer_name][param_name];
     };
 
+    log_sol("Building model");
     model full_model(internal::create_model_layer(
         get_param, json_data["architecture"],
         json_data["architecture"]["config"]["name"],
@@ -301,6 +304,7 @@ inline model read_model(std::istream& model_file_stream,
         internal::create_shape5s_variable(json_data["output_shapes"]),
         internal::json_object_get<std::string, std::string>(
             json_data, "hash", ""));
+    log_duration();
 
     if (verify)
     {
