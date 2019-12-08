@@ -5,7 +5,7 @@
 
 int mainT() {
 	std::ofstream out("data.txt");
-	for (int i = 0; i < 1089; i++) {
+	for (int i = 201; i < 1089; i++) {
 		std::string filename = "../images/image" + std::to_string(i) + ".dat";
 		std::ifstream file(filename);
 		if (file.good()) {
