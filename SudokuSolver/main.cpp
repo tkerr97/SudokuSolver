@@ -4,6 +4,7 @@
 #include <string>
 #include <stdio.h>
 #include <fdeep/fdeep.hpp>
+#include "Board.h"
 
 cv::Mat performImageActions(cv::Mat image) {
 	cv::Mat threshImage;
@@ -89,7 +90,7 @@ std::vector<std::vector<int>> findNumbers(cv::Mat image, fdeep::model model) {
 
 int main(){
 	std::cout << "OpenCV version : " << CV_VERSION << std::endl;
-	const auto model = fdeep::load_model("out.json");
+	fdeep::model model = fdeep::load_model("out.json");
 
 	while (true) {
 		std::cout << "Image File: ";
@@ -110,10 +111,17 @@ int main(){
 		// Find the outer Barrier and warp to a flat square. Then crop to the full puzzle image
 		image = warpImageToCorners(threshImage, image);
 		
-		std::vector<std::vector<int>> board = findNumbers(image, model);
-
+		std::vector<std::vector<int>> sudoku = findNumbers(image, model);
+		Board solver(sudoku);
 		//std::cout << sudoku << std::endl;
-
+		std::vector<std::vector<int>> solved = solver.solve();
+		for (int i = 0; i < 9; i++) {
+			std::cout << "---------------" << std::endl;
+			std::cout << "|";
+			for (int j = 0; j < 9; j++) {
+				std::cout << solved[i][j] << "|";
+			}
+		}
 		cv::waitKey(0);
 	}
 
