@@ -1,5 +1,6 @@
 //#include <opencv2/opencv.hpp>
 #include <vector>
+#include <iostream>
 #include "Board.h"
 Board::Board(std::vector<std::vector<int>> b)
 {
@@ -90,6 +91,8 @@ bool Board::valid_option(int row_num, int col_num, int number)
 std::vector<std::vector<int>> Board::solve()
 {
     std::vector<int> next = find_next_empty();
+    //print();
+    //std::cout << std::endl << next.at(0) << " " << next.at(1) << std::endl << std::endl;
     // Base case, if nothing is empty so we are done!
     if (next.at(0) == -1)
         return board_;
@@ -103,7 +106,8 @@ std::vector<std::vector<int>> Board::solve()
         {
             std::vector<std::vector<int>> temp = board_;
             temp.at(next.at(0)).at(next.at(1)) = number;
-            Board next_board = Board(board_);
+            Board next_board = Board(temp);
+            //next_board.print();
             temp = next_board.solve();
             // If it returns the complete puzzle then we are done!
             if (temp.size() == 9)
@@ -115,4 +119,14 @@ std::vector<std::vector<int>> Board::solve()
     temp.push_back(std::vector<int>());
     temp.at(0).push_back(-1);
     return temp;
+}
+
+void Board::print()
+{
+  for ( auto row : board_ )
+  {
+    for ( auto num : row )
+      std::cout << num << " ";
+    std::cout << std::endl;
+  }
 }

@@ -5,7 +5,7 @@ class Board {
 public:
 	Board(std::vector<std::vector<int>>);
 	std::vector<std::vector<int>> solve();
-
+        void print();
 
 private:
 	std::vector<std::vector<int>> board_;
