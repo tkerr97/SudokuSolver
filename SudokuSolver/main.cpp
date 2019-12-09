@@ -80,7 +80,6 @@ std::vector<std::vector<int>> findNumbers(cv::Mat image, fdeep::model model) {
 			fdeep::tensor5 input(fdeep::shape5(1, 1, 55, 55, 1), data);
 
 			auto out = model.predict_class({ input });
-			std::cout << "Class: " << out << std::endl;
 			row.push_back(out);
 		}
 		board.push_back(row);
@@ -102,7 +101,7 @@ int main(){
 			std::cout << "Could not open the file!" << std::endl;
 			std::cout << "Image File: ";
 			std::cin >> filename;
-			cv::Mat image = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+			image = cv::imread(filename, cv::IMREAD_GRAYSCALE);
 		}
 
 		// Make our image binary and open/close to make readable
@@ -115,13 +114,31 @@ int main(){
 		Board solver(sudoku);
 		//std::cout << sudoku << std::endl;
 		std::vector<std::vector<int>> solved = solver.solve();
-		for (int i = 0; i < 9; i++) {
-			std::cout << "---------------" << std::endl;
-			std::cout << "|";
-			for (int j = 0; j < 9; j++) {
-				std::cout << solved[i][j] << "|";
+		if (solved.size() == 9) {
+			for (int i = 0; i < 9; i++) {
+				std::cout << "-------------------" << std::endl;
+				std::cout << "|";
+				for (int j = 0; j < 9; j++) {
+					std::cout << solved[i][j] << "|";
+				}
+				std::cout << std::endl;
 			}
+			std::cout << "-------------------" << std::endl;
 		}
+		else {
+			std::cout << "Unable to solve puzzle!" << std::endl;
+			std::cout << "This is what I saw" << std::endl;
+			for (int i = 0; i < 9; i++) {
+				std::cout << "-------------------" << std::endl;
+				std::cout << "|";
+				for (int j = 0; j < 9; j++) {
+					std::cout << sudoku[i][j] << "|";
+				}
+				std::cout << std::endl;
+			}
+			std::cout << "-------------------" << std::endl;
+		}
+		
 		cv::waitKey(0);
 	}
 
