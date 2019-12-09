@@ -22,7 +22,7 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	cv::Mat edges;
 	std::vector<cv::Point2f> squareCorners = { cv::Point2f(0,0), cv::Point2f(495,0), cv::Point2f(495,495) , cv::Point2f(0,495) };
 	cv::Canny(threshImage, edges, 0, 50, 5);
-
+	cv::imwrite("edges.jpg", edges);
 	std::vector<std::vector<cv::Point> > contours;
 	std::vector<cv::Vec4i> hierarchy;
 	cv::findContours(edges, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
@@ -47,21 +47,6 @@ cv::Mat warpImageToCorners(cv::Mat threshImage, cv::Mat image) {
 	return image;
 }
 
-bool checkNumber(cv::Mat image) {
-	cv::Mat temp;
-	image.copyTo(temp);
-	std::vector<std::vector<cv::Point> > contours;
-	std::vector<cv::Vec4i> hierarchy;
-	
-	cv::Canny(temp, temp, 0, 50, 5);
-	cv::findContours(temp, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
-	std::cout << cv::mean(image) << std::endl;
-	if (cv::mean(image).val[0] > 10.0) {
-		return true;
-	}
-	return false;
-}
-
 std::vector<std::vector<int>> findNumbers(cv::Mat image, fdeep::model model) {
 	std::vector<std::vector<int>> board;
 	
@@ -78,7 +63,7 @@ std::vector<std::vector<int>> findNumbers(cv::Mat image, fdeep::model model) {
 			}
 			const fdeep::shared_float_vec data(fplus::make_shared_ref<fdeep::float_vec>(numberVec));
 			fdeep::tensor5 input(fdeep::shape5(1, 1, 55, 55, 1), data);
-
+			cv::imwrite("number.jpg", number);
 			auto out = model.predict_class({ input });
 			row.push_back(out);
 		}
@@ -115,6 +100,7 @@ int main(){
 		//std::cout << sudoku << std::endl;
 		std::vector<std::vector<int>> solved = solver.solve();
 		if (solved.size() == 9) {
+			std::cout << "Solved!!" << std::endl;
 			for (int i = 0; i < 9; i++) {
 				std::cout << "-------------------" << std::endl;
 				std::cout << "|";
